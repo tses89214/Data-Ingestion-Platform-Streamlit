@@ -1,0 +1,4 @@
+transaction_id,customer_id,product_id,amount,description,created_at
+1,1,1,100.00,Product 1 for Customer 1,2023-01-01 00:00:00
+2,AAA,2,200.00,Product 2 for Customer 2,2023-01-02 00:00:00
+3,BBB,3,300.00,Product 3 for Customer 3,2023-01-03 00:00:00

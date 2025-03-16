@@ -1,0 +1,4 @@
+id,name,age,gender,height,weight,email,created_at
+1,John,25,Male,1.75,70.5,john@example.com,2023-01-01 00:00:00
+2,Jane,30,Female,1.65,60.2,jane@example.com,2023-01-02 00:00:00 
+3,Bob,35,Male,1.80,65.1,bob@example.com,2023-01-03 00:00:00

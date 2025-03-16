@@ -1,0 +1,60 @@
+version: "3.9"
+services:
+  db:
+    image: mysql:8.0
+    env_file: .env.mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysql", "-u", "readonly", "-preadonly", "-e", "SELECT 1 FROM data_ingestion.expected_schema;"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  storage:
+    image: minio/minio:latest
+    env_file: .env.minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  frontend:
+    build:
+      dockerfile: Dockerfile_frontend
+    ports:
+      - "8501:8501"
+    environment:
+      STREAMLIT_SERVER_MAXUPLOADSIZE: 200
+      PYTHONPATH: "${PYTHONPATH}:/app/src"
+    depends_on:
+      backend:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      storage:
+        condition: service_healthy
+
+  backend:
+    build:
+      dockerfile: Dockerfile_backend
+    ports:
+      - "8500:8500"
+    environment:
+      MINIO_ENDPOINT: "storage:9000"
+      S3_BUCKET_NAME: "csv-file-uploader"
+      PYTHONPATH: "${PYTHONPATH}:/app/src"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8500/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
