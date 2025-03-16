@@ -16,9 +16,26 @@ docker compose up --build -d
 
 This command builds the Docker image and starts the application containers.
 
-
-
 ## Usage
+
+### Service Interaction Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    User->>Frontend: Accesses to the streamlit interface
+    Frontend->>Database: Retrieves the expected schema
+    Database-->>Frontend: Returns the expected schema
+    Frontend->>User: Show expected schema
+    User->>Frontend:  upload file
+    Frontend->>Backend: Sends the file and table name
+    Backend->>Database: Retrieves the expected schema
+    Database-->>Backend: Returns the expected schema
+    Backend->>Backend: Validate data
+    Backend->>MinIO(S3): Uploads the file if validate success
+    MinIO(S3)-->>Backend: Confirms the upload
+    Backend->>Frontend: Returns a status message
+    Frontend->>User: Displays the status message and a data preview
+```
 
 1.  **Access the Web Interface:** Once the application is running (see Setup), open your web browser and navigate to `http://localhost:8501`.
     ![Login_page](/docs/img/Login_page.PNG)
