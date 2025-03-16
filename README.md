@@ -38,6 +38,7 @@ sequenceDiagram
 ```
 
 1.  **Access the Web Interface:** Once the application is running (see Setup), open your web browser and navigate to `http://localhost:8501`.
+NOTE: the default username and password of streamlit is `user` and `password`.
     ![Login_page](/docs/img/Login_page.PNG)
     ![show_expect_schema](/docs/img/show_expect_schema.PNG)
 
