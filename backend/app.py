@@ -1,4 +1,5 @@
-"""FastAPI backend for data ingestion platform.
+"""
+FastAPI backend for data ingestion platform.
 
 This module provides the API endpoints for uploading and processing CSV files,
 validating their schema, and storing them in a MinIO S3 bucket.
@@ -8,11 +9,13 @@ from datetime import datetime
 import tempfile
 import csv
 from io import StringIO
+import logging
 
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.responses import JSONResponse
 import mysql.connector
 import boto3
+
 from src.utils.db_utils import get_expected_schema, validate_df_schema
 import src.utils.s3_utils as s3_utils
 
@@ -25,7 +28,7 @@ try:
     # Check if the bucket exists and create it if it doesn't
     s3_utils.check_and_create_bucket(s3)
 except Exception as ex:
-    print(f"Error checking or creating bucket: {ex}")
+    logging.info("Error checking or creating bucket: %s", ex)
     raise
 
 
@@ -102,10 +105,10 @@ async def create_upload_file(file: UploadFile = File(...), table_name: str = For
         # Upload the file to MinIO
         try:
             s3_utils.upload_file_to_s3(s3, temp_file_path, object_name)
-            print(
-                f"File '{file_name}' uploaded to '{s3_utils.S3_BUCKET_NAME}/{table_name}' successfully")
+            msg = f"File '{file_name}' uploaded to '{s3_utils.S3_BUCKET_NAME}/{table_name}' successfully"
+            logging.info(msg)
         except boto3.exceptions.S3UploadFailedError as s3ufe:
-            print(f"Error uploading file: {s3ufe}")
+            logging.info("Error uploading file: %s", s3ufe)
             return JSONResponse(
                 content={"error": f"Error uploading file to S3: {str(s3ufe)}"},
                 status_code=500,
