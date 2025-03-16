@@ -1,4 +1,5 @@
-"""Frontend application for the data ingestion platform.
+"""
+Frontend application for the data ingestion platform.
 
 This module provides a Streamlit interface for uploading CSV files,
 displaying data previews, and showing the expected schema.
